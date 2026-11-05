@@ -1,0 +1,1 @@
+{"description":"WHEEL RAID Telegram bot — community boss raid powered by Squeekchain's live hamster wheel data.","engines":{"node":">=18"},"license":"MIT","main":"bot.js","name":"wheel-raid-bot","scripts":{"start":"node bot.js"},"type":"commonjs","version":"1.0.0"}
