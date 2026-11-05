@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WHEEL RAID — Community Boss Raid powered by Squeektoshi</title>
+<meta name="description" content="A community boss raid powered by a real hamster. Every Squeekchain round, Squeektoshi's real wheel work becomes damage against the weekly boss.">
+<!-- squeekchain-genesis: wheel-raid verification tag — replace this comment with the exact tag Squeekchain gives you at Verify time, keep it in <head> -->
+<style>
+  :root{--bg:#0f1115;--card:#1a1e27;--card2:#222836;--text:#f2f3f5;--muted:#9aa3b2;--accent:#ffb020;--accent2:#ff5d73;--green:#3ddc84;--bar:#2a3040}
+  *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text)}
+  .wrap{max-width:880px;margin:0 auto;padding:20px 16px 48px}
+  header{text-align:center;padding:18px 0 6px} h1{font-size:42px;margin:0;letter-spacing:1px} h1 span{color:var(--accent)}
+  .tag{color:var(--muted);margin:6px 0 0;font-size:15px}
+  .card{background:var(--card);border:1px solid #2b3142;border-radius:16px;padding:18px;margin-top:16px}
+  .boss-emoji{font-size:64px;text-align:center;line-height:1}
+  .boss-name{text-align:center;font-size:26px;font-weight:800;margin:8px 0 2px}
+  .boss-title{text-align:center;color:var(--muted);margin:0}
+  .boss-story{text-align:center;color:#c9d1de;font-size:14px;margin:10px auto 0;max-width:560px}
+  .hpbar{background:var(--bar);border-radius:999px;height:26px;overflow:hidden;margin-top:16px;position:relative}
+  .hpfill{height:100%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .8s ease}
+  .hptext{text-align:center;font-weight:700;margin-top:8px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px}
+  .stat{background:var(--card2);border-radius:12px;padding:12px;text-align:center}
+  .stat b{display:block;font-size:20px} .stat small{color:var(--muted)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+  button{background:var(--card2);color:var(--text);border:1px solid #39415a;border-radius:12px;padding:12px 16px;font-size:15px;cursor:pointer;font-weight:600}
+  button:hover{border-color:var(--accent)} button.primary{background:var(--accent);color:#171106;border-color:var(--accent)}
+  button:disabled{opacity:.45;cursor:not-allowed} button.sel{border-color:var(--green);box-shadow:0 0 0 1px var(--green)}
+  input{background:var(--card2);border:1px solid #39415a;border-radius:12px;color:var(--text);padding:12px;font-size:15px;min-width:220px}
+  h2{font-size:19px;margin:0 0 6px} .muted{color:var(--muted);font-size:13px}
+  table{width:100%;border-collapse:collapse} td,th{padding:8px 6px;border-bottom:1px solid #2b3142;text-align:left;font-size:14px}
+  .log{font-size:13px;color:#c9d1de;max-height:240px;overflow:auto} .log div{padding:6px 0;border-bottom:1px dashed #2b3142}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;background:var(--card2);font-size:12px;margin:2px}
+  .dream{color:var(--accent);font-weight:700} a{color:var(--accent)}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🐹 WHEEL <span>RAID</span></h1>
+    <p class="tag">A community boss raid powered by a real hamster.<br>Every Squeekchain round, Squeektoshi's real wheel work becomes damage. Fight the weekly boss — together.</p>
+  </header>
+
+  <div class="card" id="bossCard">
+    <div class="boss-emoji" id="bossEmoji">🌀</div>
+    <div class="boss-name" id="bossName">Loading boss…</div>
+    <p class="boss-title" id="bossTitle"></p>
+    <p class="boss-story" id="bossStory"></p>
+    <div class="hpbar"><div class="hpfill" id="hpFill" style="width:100%"></div></div>
+    <div class="hptext" id="hpText">— HP</div>
+    <div style="text-align:center" id="dreamBox"></div>
+  </div>
+
+  <div class="card">
+    <h2>🔴 Squeektoshi — Live <span class="muted" id="freshness"></span></h2>
+    <div class="grid">
+      <div class="stat"><b id="stStatus">—</b><small>Wheel status</small></div>
+      <div class="stat"><b id="stRpm">—</b><small>RPM</small></div>
+      <div class="stat"><b id="stRound">—</b><small>Chain round</small></div>
+      <div class="stat"><b id="stWork">—</b><small>Total wheel work</small></div>
+      <div class="stat"><b id="stDist">—</b><small>Total distance</small></div>
+      <div class="stat"><b id="stBlock">—</b><small>Block height</small></div>
+    </div>
+    <p class="muted">Source: <a href="https://api.squeekchain.com/v1/status" target="_blank" rel="noopener">api.squeekchain.com/v1/status</a> · Settlement tx: <span id="stTx">—</span> · Refreshes every 20s. If the API is down, last good values stay on screen.</p>
+  </div>
+
+  <div class="card">
+    <h2>⚔️ Join the Raid</h2>
+    <div class="row">
+      <input id="playerName" placeholder="Your raider name" maxlength="24">
+      <input id="wallet" placeholder="Wallet address (optional, 0x…)" maxlength="42">
+      <button class="primary" id="joinBtn">Join</button>
+    </div>
+    <p class="muted" style="text-align:center">No gas, no transaction, no custody. Web play uses a name; the Telegram bot uses wallet signed-message sign-in. One action per player per round.</p>
+    <div class="row" role="group" aria-label="Choose your action">
+      <button data-action="charge">🏃 Runner — /charge<br><small>+10% next round</small></button>
+      <button data-action="cheer">📣 Cheerer — /cheer<br><small>x2 on Zoomies</small></button>
+    </div>
+    <div class="row" role="group" aria-label="Predict this round">
+      <span class="muted" style="align-self:center">🔮 Oracle — predict this round:</span>
+      <button data-predict="nap">💤 Nap</button>
+      <button data-predict="jog">🐾 Jog</button>
+      <button data-predict="zoomies">🔥 Zoomies</button>
+    </div>
+    <p style="text-align:center" id="myStatus">Join to play. Your Raid Points: <b>0 RP</b></p>
+  </div>
+
+  <div class="card">
+    <h2>🏆 Leaderboard — This Week</h2>
+    <table><thead><tr><th>#</th><th>Raider</th><th>Raid Points</th><th>Rounds</th></tr></thead><tbody id="board"></tbody></table>
+    <p class="muted">Your score is saved in this browser. In the Telegram bot, the same engine keeps one shared board for the whole group.</p>
+  </div>
+
+  <div class="card">
+    <h2>📜 Raid Log</h2>
+    <div class="log" id="log"><div>Waiting for the wheel…</div></div>
+  </div>
+
+  <div class="card">
+    <h2>🎮 How it works</h2>
+    <p class="muted" style="font-size:14px;line-height:1.65">
+      One boss per week. Each round, damage = Squeektoshi's real wheel work in that round × 10 × community buffs.
+      💤 <b>Nap</b> (0 work): the boss heals 250 HP — but 3 naps in a row charge <span class="dream">Dream Energy</span>, and the next running round hits for ×3.
+      🐾 <b>Jog</b> (1–499) and 🔥 <b>Zoomies</b> (500+) deal damage. Correct Oracle predictions earn +50 RP.
+      Kill the boss before Sunday 23:59 UTC and every raider with 10+ rounds this week earns the Boss Kill bonus (+200 RP).
+      No gambling, no token, no payments — naps score too, and the hamster is never forced or encouraged to run.
+    </p>
+  </div>
+
+  <footer>WHEEL RAID · Built for Squeekchain Genesis · Data: Squeekchain public API (Sepolia) · <a href="https://squeekchain.com/genesis/code" target="_blank" rel="noopener">Squeekchain Genesis</a></footer>
+</div>
+
+<script src="engine/game-engine.js"></script>
+<script>
+(function(){
+  const E = window.WheelRaid;
+  const $ = id => document.getElementById(id);
+  const LS = 'wheelraid-v1';
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(LS) || '{}'); } catch(e) {}
+  const boss = E.currentBoss();
+  let state = saved.state || {
+    bossId: boss.id, bossMaxHP: E.bossMaxHP(0), bossHP: E.bossMaxHP(0),
+    consecutiveNaps: 0, dreamArmed: false, buffNextRound: 0, cheerCount: 0,
+    players: {}, week: E.weekIndex()
+  };
+  if (state.week !== E.weekIndex()) { // new week -> new boss, fresh HP
+    const nb = E.currentBoss();
+    state = { bossId: nb.id, bossMaxHP: E.bossMaxHP(Object.keys(state.players).length), bossHP: E.bossMaxHP(Object.keys(state.players).length),
+      consecutiveNaps: 0, dreamArmed: false, buffNextRound: 0, cheerCount: 0, players: state.players, week: E.weekIndex() };
+    log('🆕 New week — a new boss has arrived!');
+  }
+  let me = saved.me || null;
+  let last = null;         // last parsed API status
+  let roundStartWork = null;
+  let currentRound = null;
+  let actedRound = saved.actedRound || null;
+
+  function persist(){ try{ localStorage.setItem(LS, JSON.stringify({state, me, actedRound})); }catch(e){} }
+  function log(msg){
+    const el = $('log');
+    if (el.firstChild && el.firstChild.textContent === 'Waiting for the wheel…') el.innerHTML = '';
+    const d = document.createElement('div');
+    d.textContent = new Date().toLocaleTimeString() + ' — ' + msg;
+    el.prepend(d);
+    while (el.children.length > 30) el.removeChild(el.lastChild);
+  }
+  function render(){
+    const b = E.BOSSES[state.bossId];
+    $('bossEmoji').textContent = b.emoji; $('bossName').textContent = b.name;
+    $('bossTitle').textContent = b.title; $('bossStory').textContent = b.story + ' ' + b.weakness;
+    const pct = Math.max(0, Math.round(state.bossHP / state.bossMaxHP * 100));
+    $('hpFill').style.width = pct + '%';
+    $('hpText').textContent = state.bossHP.toLocaleString() + ' / ' + state.bossMaxHP.toLocaleString() + ' HP (' + pct + '%)';
+    $('dreamBox').innerHTML = state.dreamArmed ? '<span class="dream">✨ DREAM ENERGY ARMED — next running round deals ×3 damage!</span>'
+      : '<span class="pill">Nap streak: ' + (state.consecutiveNaps||0) + ' / ' + E.CONFIG.dreamNapStreak + ' for Dream Energy</span>';
+    if (last){
+      $('stStatus').textContent = last.coreStatus === 'IDLE' ? '💤 Sleeping / Idle' : '🏃 Running';
+      $('stRpm').textContent = last.rpm.toFixed(1);
+      $('stRound').textContent = last.currentRound != null ? '#' + last.currentRound : '—';
+      $('stWork').textContent = last.work.toLocaleString();
+      $('stDist').textContent = (last.distanceMm/1000).toFixed(1) + ' m';
+      $('stBlock').textContent = last.blockHeight != null ? last.blockHeight : '—';
+      $('freshness').textContent = '· ' + (last.freshness || '') + ' · ' + (last.observedAt ? new Date(last.observedAt).toLocaleTimeString() : '');
+      $('stTx').innerHTML = last.settlementTx ? '<a target="_blank" rel="noopener" href="https://sepolia.etherscan.io/tx/' + last.settlementTx + '">' + last.settlementTx.slice(0,10) + '…</a>' : '—';
+    }
+    // leaderboard
+    const rows = Object.entries(state.players).map(([id,p])=>({id,...p})).sort((a,b)=>b.points-a.points).slice(0,20);
+    $('board').innerHTML = rows.length ? rows.map((p,i)=>'<tr><td>'+(i+1)+'</td><td>'+escapeHtml(p.name)+'</td><td><b>'+p.points+' RP</b></td><td>'+(p.roundsPlayed||0)+'</td></tr>').join('')
+      : '<tr><td colspan="4" class="muted">No raiders yet — be the first.</td></tr>';
+    if (me && state.players[me]){
+      const p = state.players[me];
+      $('myStatus').innerHTML = 'Raider: <b>' + escapeHtml(p.name) + '</b> · Your Raid Points: <b>' + p.points + ' RP</b> · Rounds played: ' + (p.roundsPlayed||0) +
+        (actedRound === currentRound ? ' · ✅ Action locked in for round #' + currentRound : ' · ⏳ No action yet this round');
+    }
+    document.querySelectorAll('[data-action]').forEach(btn=>{
+      btn.disabled = !me || actedRound === currentRound;
+    });
+    document.querySelectorAll('[data-predict]').forEach(btn=>{
+      btn.disabled = !me || (me && state.players[me] && state.players[me].predictionRound === currentRound);
+    });
+    persist();
+  }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+  $('joinBtn').onclick = () => {
+    const name = $('playerName').value.trim() || 'Anonymous Raider';
+    const wallet = $('wallet').value.trim();
+    const id = wallet ? wallet.toLowerCase() : 'web:' + name.toLowerCase();
+    if (!state.players[id]) state.players[id] = { name, points: 0, roundsPlayed: 0, lastRound: null, action: null, prediction: null, predictionRound: null };
+    state.players[id].name = name;
+    me = id; log('⚔️ ' + name + ' joined the raid against ' + E.BOSSES[state.bossId].name + '!');
+    render();
+  };
+  if (me && state.players[me]) $('playerName').value = state.players[me].name;
+
+  document.querySelectorAll('[data-action]').forEach(btn=>{
+    btn.onclick = () => {
+      if (!me) return;
+      const p = state.players[me];
+      p.action = btn.dataset.action; p.lastRound = currentRound; p.roundsPlayed = (p.roundsPlayed||0) + 1;
+      if (p.action === 'charge') state.buffNextRound = Math.max(state.buffNextRound, 0.10);
+      if (p.action === 'cheer') state.cheerCount = (state.cheerCount||0) + 1;
+      actedRound = currentRound;
+      log('You used ' + (p.action === 'charge' ? '🏃 /charge (+10% next round)' : '📣 /cheer') + ' for round #' + currentRound);
+      render();
+    };
+  });
+  document.querySelectorAll('[data-predict]').forEach(btn=>{
+    btn.onclick = () => {
+      if (!me) return;
+      const p = state.players[me];
+      p.prediction = btn.dataset.predict; p.predictionRound = currentRound;
+      if (p.lastRound !== currentRound){ p.lastRound = currentRound; p.roundsPlayed = (p.roundsPlayed||0) + 1; }
+      log('🔮 You predicted ' + btn.dataset.predict + ' for round #' + currentRound);
+      render();
+    };
+  });
+
+  async function poll(){
+    try {
+      const res = await fetch(E.API.status, { cache: 'no-store' });
+      const json = await res.json();
+      const parsed = E.parseStatus(json);
+      if (!parsed) return;
+      if (currentRound === null){ currentRound = parsed.currentRound; roundStartWork = parsed.work; }
+      // Round changed -> settle the finished round with its REAL work delta
+      if (parsed.currentRound !== null && parsed.currentRound !== currentRound){
+        const workDelta = Math.max(0, parsed.work - roundStartWork);
+        const finishedRound = currentRound;
+        // players who acted were tagged with lastRound = finishedRound (or current at click time)
+        const { report } = E.settleRound(state, { roundId: finishedRound, workUnits: workDelta });
+        log(report.emoji + ' Round #' + report.roundId + ' settled: ' + report.type.toUpperCase() + ' · work ' + report.workUnits +
+          (report.damage ? ' · ⚔️ ' + report.damage + ' damage (x' + report.multiplier.toFixed(2) + ')' : '') +
+          (report.healed ? ' · 💚 boss healed ' + report.healed : '') +
+          (report.dreamUsed ? ' · ✨ DREAM STRIKE!' : '') +
+          (report.bossKilled ? ' · 🏆 BOSS KILLED!' : ''));
+        if (report.bossKilled){
+          const nb = E.BOSSES[(state.bossId + 1) % E.BOSSES.length];
+          state.bossId = nb.id; state.bossMaxHP = E.bossMaxHP(Object.keys(state.players).length); state.bossHP = state.bossMaxHP;
+          log('🆕 Next boss approaches: ' + nb.emoji + ' ' + nb.name);
+        }
+        currentRound = parsed.currentRound; roundStartWork = parsed.work; actedRound = null;
+      }
+      last = parsed; render();
+    } catch(e) {
+      $('freshness').textContent = '· API unreachable — showing last good values';
+    }
+  }
+  render(); poll(); setInterval(poll, 20000);
+})();
+</script>
+</body>
+</html>
