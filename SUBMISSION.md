@@ -16,7 +16,7 @@ Playable on the web and as a Telegram bot sharing one game engine. No gambling, 
 Category: Server games and bots / Games powered by Squeekchain
 
 ## Links to fill in at submit time
-- Live site: https://YOUR-DOMAIN (after deploying — see README "Run it")
+- Live site: https://mikkimausua.github.io/wheel-raid/
 - GitHub: https://github.com/MikkiMausua/wheel-raid
 - Telegram bot: @YOUR_BOT (after @BotFather step — see checklist)
 
@@ -35,10 +35,12 @@ Squeekchain FAQ (genesis/code): Direct submission = add the DNS record they give
 - [x] Marked comment in `index.html` `<head>` where the Genesis page tag goes
 - [x] Submission name / tagline / long description written (above)
 - [x] Local git repository initialised and committed
+- [x] GitHub repo created and code pushed: https://github.com/MikkiMausua/wheel-raid
+- [x] Live site deployed via GitHub Pages: https://mikkimausua.github.io/wheel-raid/
 
 ### Only you can do these (wallet / account steps) 👤
-1. [ ] Create the GitHub repo: `gh auth login` then `gh repo create wheel-raid --public --source=. --push` from this folder — or create an empty public repo on github.com and push (commands in the delivery message).
-2. [ ] Deploy the live site: GitHub Pages (Settings → Pages → deploy from `main` branch, root) is the free one-click option, or Netlify/Vercel/Cloudflare Pages with the repo root.
+1. [x] Create the GitHub repo and push — DONE 2026-11-05 via API (device-flow CLI login failed twice at the token step; PAT via Secure Vault used instead).
+2. [x] Deploy the live site — DONE, GitHub Pages on main branch root, build verified.
 3. [ ] (Optional but recommended) Telegram bot: @BotFather → /newbot → put the token in `bot/.env` → `node bot.js` on any always-on host.
 4. [ ] In Squeekchain Genesis: verify your profile wallet (a regular wallet, not a smart-contract wallet).
 5. [ ] Start the Direct verification for WHEEL RAID, then paste what they give you into the 3 marked places:
