@@ -17,7 +17,7 @@ Category: Server games and bots / Games powered by Squeekchain
 
 ## Links to fill in at submit time
 - Live site: https://YOUR-DOMAIN (after deploying — see README "Run it")
-- GitHub: https://github.com/YOUR-USERNAME/wheel-raid
+- GitHub: https://github.com/MikkiMausua/wheel-raid
 - Telegram bot: @YOUR_BOT (after @BotFather step — see checklist)
 
 ---
