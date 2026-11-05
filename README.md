@@ -35,7 +35,7 @@ Verified live on 2026-11-05: status returned work `3817`, block `366`, settled t
 
 ### Web (zero build)
 ```bash
-git clone https://github.com/YOUR-USERNAME/wheel-raid.git
+git clone https://github.com/MikkiMausua/wheel-raid.git
 cd wheel-raid
 python3 -m http.server 8080
 # open http://localhost:8080
